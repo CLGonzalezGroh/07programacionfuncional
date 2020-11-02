@@ -8,6 +8,32 @@ const $protein = document.getElementById("protein");
 
 const list = [];
 
+const attrsToString = (obj = {}) => {
+  const keys = Object.keys(obj);
+  const attrs = [];
+
+  for (let i = 0; i < keys.length; i++) {
+    let attr = keys[i];
+    attrs.push(`${attr}=${obj[attr]}`);
+  }
+
+  const string = attrs.join(" ");
+  return string;
+};
+
+const tagAttrs = (obj) => (content = "") =>
+  `<${obj.tag}${obj.attrs ? " " : ""}${attrsToString(obj.attrs)}>${content}<${
+    obj.tag
+  }>`;
+
+const tag = (t) => {
+  if (typeof t === "string") {
+    return tagAttrs({ tag: t });
+  } else {
+    return tagAttrs(t);
+  }
+};
+
 const validateInputs = () => {
   $description.value ? "" : $description.classList.add("is-invalid");
   $calories.value ? "" : $calories.classList.add("is-invalid");
