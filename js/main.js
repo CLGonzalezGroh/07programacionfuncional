@@ -22,7 +22,7 @@ const attrsToString = (obj = {}) => {
 };
 
 const tagAttrs = (obj) => (content = "") =>
-  `<${obj.tag}${obj.attrs ? " " : ""}${attrsToString(obj.attrs)}>${content}<${
+  `<${obj.tag}${obj.attrs ? " " : ""}${attrsToString(obj.attrs)}>${content}</${
     obj.tag
   }>`;
 
@@ -33,6 +33,14 @@ const tag = (t) => {
     return tagAttrs(t);
   }
 };
+const tableRowTag = tag("tr");
+const tableRow = (items) => tableRowTag(tableCells(items));
+//const tableRow = (items) => compose(tableRowTag, tableCells)(items);
+
+const tableCell = tag("td");
+console.log(tableCell);
+const tableCells = (items) => items.map(tableCell).join("");
+console.log(tableCells);
 
 const validateInputs = () => {
   $description.value ? "" : $description.classList.add("is-invalid");
@@ -53,8 +61,25 @@ const add = () => {
     protein: parseInt($protein.value),
   };
   list.push(newItem);
-  console.log(list);
+  updateTotals();
+  renderItems();
   cleanInputs();
+};
+
+const updateTotals = () => {
+  let calories = 0,
+    carbs = 0,
+    protein = 0;
+
+  list.map((item) => {
+    (calories += item.calories),
+      (carbs += item.carbs),
+      (protein += item.protein);
+  });
+
+  document.getElementById("totalCalories").textContent = calories;
+  document.getElementById("totalCarbs").textContent = carbs;
+  document.getElementById("totalProtein").textContent = protein;
 };
 
 const cleanInputs = () => {
@@ -62,6 +87,23 @@ const cleanInputs = () => {
   $calories.value = "";
   $carbs.value = "";
   $protein.value = "";
+};
+
+const renderItems = () => {
+  const itemList = document.getElementById("itemList");
+  itemList.innerHTML = "";
+  console.log(itemList);
+  list.map((item) => {
+    const row = tableRow([
+      item.description,
+      item.calories,
+      item.carbs,
+      item.protein,
+    ]);
+
+    itemList.appendChild(row);
+    console.log(itemList);
+  });
 };
 
 $description.addEventListener("keydown", () =>
